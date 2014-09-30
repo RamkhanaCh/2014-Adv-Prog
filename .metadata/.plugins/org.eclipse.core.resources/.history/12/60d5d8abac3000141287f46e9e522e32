@@ -1,0 +1,10 @@
+import javax.swing.JFrame;
+
+
+public class TestJFrame extends JFrame {
+	public static void main(String[] args){
+	JFrame frame = new JFrame("Test");
+	frame.setSize(300,300);
+	frame.setVisible(true);
+	}
+}

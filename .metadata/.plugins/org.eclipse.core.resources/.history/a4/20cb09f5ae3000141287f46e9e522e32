@@ -1,0 +1,23 @@
+import java.awt.BorderLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+
+public class TestJFrame extends JFrame {
+	public static void main(String[] args){
+	JFrame frame = new JFrame("Test");
+	frame.setSize(400,200);
+	frame.setVisible(true);
+	JButton bt[] = new JButton[2];
+	frame.setLayout(new java.awt.FlowLayout());
+	for(int i=0;i<bt.length;i++){
+		bt[i] = new JButton("Action"+i);
+		frame.add(bt[i],BorderLayout.NORTH);
+		bt[i].addActionListener(new MyButtonHandler());
+	}
+	}
+
+}
+

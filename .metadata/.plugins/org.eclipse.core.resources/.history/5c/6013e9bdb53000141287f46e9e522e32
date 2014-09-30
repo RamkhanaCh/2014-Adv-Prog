@@ -1,0 +1,58 @@
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JSlider;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class TestJFrame extends JFrame {
+	public static void createAndShowGUI() {
+		JFrame frame = new JFrame("Test");
+		frame.setVisible(true);
+		// JLabel
+		ImageIcon icon = new ImageIcon("D:\\coffee.PNG");
+		JLabel label = new JLabel(icon, JLabel.CENTER);
+		label.setPreferredSize(new Dimension(100,30));
+		frame.add(label);
+
+		// JButton
+		JButton bt[] = new JButton[2];
+		frame.setLayout(new java.awt.FlowLayout());
+		frame.setLayout(new GridLayout(8, 8));
+		for (int i = 0; i < bt.length; i++) {
+			bt[i] = new JButton("Action" + i);
+			frame.add(bt[i]);
+		}
+
+		// Actionlistener
+		bt[0].addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Execute when button is pressed
+				System.out.println("You clicked the first button");
+			}
+		});
+		bt[1].addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Execute when button is pressed
+				System.out.println("You clicked the second button");
+			}
+		});
+		frame.add(new JSlider());
+		frame.pack();
+	}
+
+	public static void main(String[] args) {
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				createAndShowGUI();
+			}
+		});
+
+	}
+}

@@ -1,0 +1,220 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
+import java.util.Random;
+
+import javax.swing.JApplet;
+import javax.swing.JOptionPane;
+
+public class ScreenSaver extends JApplet implements Runnable {
+	private static final long serialVersionUID = 1L;
+	final int MAXOBJECTS = 20; // maximum number of objects to be drawn
+	final int XLEFTMOST = 0; // left most x-coordinate of the screen
+	final int XRIGHTMOST = 700; // right most x-coordinate of the screen
+	final int YTOPMOST = 0; // top most y-coordinate of the screen
+	final int YBOTTOMMOST = 500; // bottom most y-coordinate of the screen
+	final int MAXWIDTH = 100; // maximum width of an object
+	Random ranDomShapeID = new Random(); // object used for creating random
+											// integer
+	Shape[] shapes = new Shape[MAXOBJECTS]; // store objects to draw
+	int[] upOrDowns = new int[MAXOBJECTS]; // store direction of each object
+	int delay = 30;
+	int type[] = new int[MAXOBJECTS];
+	int[][] properties = new int[MAXOBJECTS][4]; // store the properties of //
+													// shape(type,x,y,width)
+	int x = 0;
+	int y = 0;
+	int width = 0;
+	int count = 0;
+	Graphics g;
+	Thread pic = new Thread(this);
+
+	public void init() {
+		setSize(XRIGHTMOST, YBOTTOMMOST);
+		pic.start();
+	}
+
+	public void paint(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+		super.paint(g2);
+		if (count == 0) {
+			for (int i = 0; i < MAXOBJECTS; i++) {
+				if (type[i] == 0) {
+					shapes[i] = getSquare(g2, i);
+					while (i != 0 && isInEmptySpace(i)) {
+						shapes[i] = getSquare(g2, i);
+					}
+
+				} else {
+					shapes[i] = getCircle(g2, i);
+					while (i != 0 && isInEmptySpace(i)) {
+						shapes[i] = getCircle(g2, i);
+					}
+				}
+			}
+
+			for (int i = 0; i < MAXOBJECTS; i++) {
+				g2.setColor(Color.blue);
+				g2.fill(shapes[i]);
+
+			}
+			randomDirection();
+		} else {
+			for (int i = 0; i < MAXOBJECTS; i++) {
+				if (isInWindow(i)) {
+					if (type[i] == 0) {
+						if (upOrDowns[i] == 0) {
+							shapes[i] = new Rectangle2D.Double(
+									properties[i][1], properties[i][2] -= 5,
+									properties[i][3], properties[i][3]);
+						} else {
+							shapes[i] = new Rectangle2D.Double(
+									properties[i][1], properties[i][2] += 5,
+									properties[i][3], properties[i][3]);
+						}
+					} else {
+						if (upOrDowns[i] == 0) {
+							shapes[i] = new Ellipse2D.Double(properties[i][1],
+									properties[i][2] -= 5, properties[i][3],
+									properties[i][3]);
+						} else {
+							shapes[i] = new Ellipse2D.Double(properties[i][1],
+									properties[i][2] += 5, properties[i][3],
+									properties[i][3]);
+						}
+					}
+				} else {
+					if (upOrDowns[i] == 0) {
+						upOrDowns[i] = 1;
+					} else {
+						upOrDowns[i] = 0;
+					}
+					if (type[i] == 0) {
+						if (upOrDowns[i] == 0) {
+							shapes[i] = new Rectangle2D.Double(
+									properties[i][1], properties[i][2] -= 5,
+									properties[i][3], properties[i][3]);
+						} else {
+							shapes[i] = new Rectangle2D.Double(
+									properties[i][1], properties[i][2] += 5,
+									properties[i][3], properties[i][3]);
+						}
+					} else {
+						if (upOrDowns[i] == 0) {
+							shapes[i] = new Ellipse2D.Double(properties[i][1],
+									properties[i][2] -= 5, properties[i][3],
+									properties[i][3]);
+						} else {
+							shapes[i] = new Ellipse2D.Double(properties[i][1],
+									properties[i][2] += 5, properties[i][3],
+									properties[i][3]);
+						}
+					}
+
+				}
+
+			}
+			for (int i = 0; i < MAXOBJECTS; i++) {
+				g2.setColor(Color.blue);
+				g2.fill(shapes[i]);
+			}
+		}
+
+	}
+
+
+	private int[] randomShape() {
+		for (int i = 0; i < MAXOBJECTS; i++) {
+			type[i] = ranDomShapeID.nextInt(2);
+		}
+		return type;
+	}
+
+	private Shape getSquare(Graphics2D g2, int i) {
+		int squareProperty[] = getShapeProperty(); // method to return the array
+													// of {x coordinate, y
+													// coordinate, side length}
+		Rectangle2D square = new Rectangle2D.Double(squareProperty[0],
+				squareProperty[1], squareProperty[2], squareProperty[2]);
+		properties[i][0] = 0;
+		properties[i][1] = squareProperty[0];
+		properties[i][2] = squareProperty[1];
+		properties[i][3] = squareProperty[2];
+		return square;
+	}
+
+	private Shape getCircle(Graphics2D g2, int i) {
+		int circleProperty[] = getShapeProperty(); // method to return the array
+													// of {x coordinate, y
+													// coordinate, side length}
+		Ellipse2D circle = new Ellipse2D.Double(circleProperty[0],
+				circleProperty[1], circleProperty[2], circleProperty[2]);
+		properties[i][0] = 1;
+		properties[i][1] = circleProperty[0];
+		properties[i][2] = circleProperty[1];
+		properties[i][3] = circleProperty[2];
+		return circle;
+	}
+
+	private int[] getShapeProperty() {
+		x = ranDomShapeID.nextInt(XRIGHTMOST);
+		y = ranDomShapeID.nextInt(YBOTTOMMOST);
+		width = ranDomShapeID.nextInt(MAXWIDTH);
+
+		while ((XRIGHTMOST - x - 5) < (width)
+				|| (YBOTTOMMOST - y - 5) < (width)) {
+			x = ranDomShapeID.nextInt(XRIGHTMOST);
+			y = ranDomShapeID.nextInt(YBOTTOMMOST);
+			width = ranDomShapeID.nextInt(MAXWIDTH);
+		}
+		int[] prop = { x, y, width };
+		return prop;
+	}
+
+	private int[] randomDirection() {
+		for (int i = 0; i < MAXOBJECTS; i++) {
+			int d = ranDomShapeID.nextInt(2);
+			upOrDowns[i] = d;
+		}
+		return upOrDowns;
+	}
+
+	private boolean isInWindow(int shapeNumber) {
+		Rectangle2D tempPic = new Rectangle2D.Double(properties[shapeNumber][1],
+				properties[shapeNumber][2], properties[shapeNumber][3],
+				properties[shapeNumber][3]);
+		Rectangle2D canvas = new Rectangle2D.Double(XLEFTMOST, YTOPMOST,
+				XRIGHTMOST, YBOTTOMMOST);
+		return (canvas.contains(tempPic));
+	}
+
+	private boolean isInEmptySpace(int shapeNumber) {
+		boolean empty = false;
+		for (int i = 0; i<shapeNumber; i++) {
+			empty = empty
+					|| shapes[shapeNumber].getBounds2D().intersects(
+							shapes[i].getBounds2D());
+		}
+		return empty;
+	}
+
+	public void run() {
+		while (true) {
+			try {
+				Thread.sleep(delay);
+				if(count == 0){
+					JOptionPane.showMessageDialog(null,"Ready?");
+					count++;
+				} else {
+					this.repaint();
+					count++;
+				}
+			} catch (InterruptedException e) {
+
+			}
+		}
+	}
+}

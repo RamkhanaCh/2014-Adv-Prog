@@ -1,0 +1,106 @@
+package com.lab04.inClass;
+
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+
+public class NiceQuote extends JFrame {
+	JFrame frame;
+	JPanel panel, imagepanel, bigpanel;
+	JLabel label;
+	JTextField textField;
+	JTextArea textArea;
+	JMenuBar menubar;
+	JMenu menu;
+	JMenuItem menuItem1;
+	JMenuItem menuItem2;
+	JMenuItem menuItem3;
+	JFileChooser file;
+
+	public NiceQuote() {
+		frame = new JFrame("NiceQuote");
+		frame.setLayout(new BorderLayout());
+		createMenuBar();
+		bigpanel = new JPanel();
+		frame.add(bigpanel, BorderLayout.CENTER);
+		panel = new JPanel();
+		bigpanel.add(panel, BorderLayout.NORTH);
+		label = new JLabel("Quote");
+		textField = new JTextField(30);
+		panel.add(label);
+		panel.add(textField, BorderLayout.NORTH);
+		imageSite();
+		
+	}
+
+	public void createAndShowGUI() {
+		frame.setPreferredSize(new Dimension(700,500));
+		frame.setVisible(true);
+		frame.pack();
+	}
+
+	public void createMenuBar() {
+		menubar = new JMenuBar();
+		frame.add(menubar, BorderLayout.PAGE_START);
+		menu = new JMenu("File");
+		menubar.add(menu);
+		menuItem1 = new JMenuItem("New");
+		menuItem2 = new JMenuItem(new LoadBackground());
+		menuItem3 = new JMenuItem("Exit");
+		menu.add(menuItem1);
+		menu.add(menuItem2);
+		menu.add(menuItem3);
+
+	}
+	
+	public void imageSite(){
+		imagepanel = new JPanel();
+		imagepanel.setBorder(BorderFactory.createLineBorder(Color.black));
+		bigpanel.add(imagepanel, BorderLayout.CENTER);
+		imagepanel.setBackground(Color.red);
+	}
+
+	class LoadBackground extends AbstractAction {
+		public LoadBackground() {
+			super("Load Backgroud");
+			//putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+			//		KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+			putValue(AbstractAction.SHORT_DESCRIPTION, "Load Background image");
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			JFileChooser chooser = new JFileChooser();
+			int returnVal = chooser.showOpenDialog(NiceQuote.this);
+			// This demo does nothing with returnVal
+		}
+	}
+	
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				NiceQuote nc = new NiceQuote();
+				nc.createAndShowGUI();
+			}
+		});
+	}
+}
